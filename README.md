@@ -3,7 +3,6 @@
 Simulador interactivo, en un único archivo HTML autocontenido, para la enseñanza de la teoría del consumidor en cursos de Microeconomía Intermedia. Permite visualizar el óptimo del consumidor bajo distintas funciones de utilidad y descomponer el efecto de una variación de precio en efecto sustitución y efecto ingreso, mediante los procedimientos de **Slutsky** y de **Hicks**.
 
 **Demo en vivo:** `https://fcontiggiani.github.io/microeconomia-recursos/consumer_choice_standalone.html`
-*(reemplazar por la dirección efectiva una vez publicado el repositorio mediante GitHub Pages — véase la sección [Publicación](#publicación))*
 
 ![Captura del simulador](captura.png)
 
