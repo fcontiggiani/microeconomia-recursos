@@ -2,7 +2,7 @@
 
 Simulador interactivo, en un único archivo HTML autocontenido, para la enseñanza de la teoría del consumidor en cursos de Microeconomía Intermedia. Permite visualizar el óptimo del consumidor bajo distintas funciones de utilidad y descomponer el efecto de una variación de precio en efecto sustitución y efecto ingreso, mediante los procedimientos de **Slutsky** y de **Hicks**.
 
-**Demo en vivo:** `https://<usuario>.github.io/<repositorio>/consumer_choice_standalone.html`
+**Demo en vivo:** `https://fcontiggiani.github.io/microeconomia-recursos/consumer_choice_standalone.html`
 *(reemplazar por la dirección efectiva una vez publicado el repositorio mediante GitHub Pages — véase la sección [Publicación](#publicación))*
 
 ![Captura del simulador](captura.png)
@@ -39,10 +39,6 @@ Un panel de diagnóstico clasifica automáticamente el bien (normal, neutro, inf
 ```
 
 El archivo `consumer_choice_standalone.html` no requiere proceso de compilación ni instalación de paquetes: es HTML, CSS y JavaScript plano, con la única dependencia externa de las tipografías Spectral, IBM Plex Sans e IBM Plex Mono, servidas desde Google Fonts.
-
-## Publicación
-
-El repositorio está preparado para servirse mediante **GitHub Pages**. El procedimiento completo de publicación y de integración en Moodle se documenta por separado en `instrucciones-publicacion-github-moodle.md` (disponible en el proyecto de la cátedra). En síntesis: `Settings → Pages → Deploy from a branch → main → / (root)`.
 
 ## Requisitos técnicos
 
