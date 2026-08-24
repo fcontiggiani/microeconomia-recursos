@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Especialización bajo Ventaja Comparativa — Modelo Ricardiano</title>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    options: {
+      skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+    }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+  :root{
+    --ink:#1c2b30;
+    --paper:#f6f3ec;
+    --paperDark:#ece6d8;
+    --lineA:#2c6e6b;   /* país A / bien 1 */
+    --lineB:#a2542e;   /* país B / bien 2 */
+    --accent:#c9a24b;  /* precio internacional */
+    --grid:#d9d2bf;
+    --muted:#6b6459;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype", Palatino, Georgia, serif;
+    padding:28px 18px 60px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+  h1{
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight:600; font-size:1.55rem; letter-spacing:.2px;
+    margin:0 0 4px;
+  }
+  .subtitle{color:var(--muted); font-size:.95rem; margin-bottom:22px; font-style:italic;}
+  .grid{
+    display:grid; grid-template-columns: 300px 1fr 1fr; gap:22px;
+  }
+  .gridWorld{
+    display:grid; grid-template-columns: 300px 1fr; gap:22px; margin-top:22px;
+  }
+  @media (max-width: 920px){ .grid{grid-template-columns:1fr;} .gridWorld{grid-template-columns:1fr;} }
+  .sectionLabel{
+    grid-column: 1/-1; margin-top:28px; font-size:.78rem; text-transform:uppercase;
+    letter-spacing:1.6px; color:var(--muted); border-top:1px solid var(--grid);
+    padding-top:18px;
+  }
+  .lineWorld{stroke:var(--accent); stroke-width:2.6;}
+  .lineWorldGhost{stroke:var(--grid); stroke-width:1.4; stroke-dasharray:3 3;}
+
+  .panel{
+    background:var(--paperDark); border:1px solid var(--grid);
+    border-radius:6px; padding:16px 18px;
+  }
+  .panel h2{
+    font-size:.78rem; text-transform:uppercase; letter-spacing:1.4px;
+    color:var(--muted); margin:0 0 14px; font-family: Georgia, serif; font-weight:600;
+  }
+  .field{margin-bottom:14px;}
+  .field label{
+    display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:5px;
+  }
+  .field label span.val{font-variant-numeric:tabular-nums; color:var(--ink); font-weight:600;}
+  input[type=range]{
+    width:100%; accent-color: var(--accent); height:4px;
+  }
+  .divider{height:1px;background:var(--grid); margin:16px 0;}
+  .tag{
+    display:inline-block; font-size:.7rem; padding:2px 7px; border-radius:3px;
+    margin-left:6px; font-family: Georgia, serif;
+  }
+  .tagA{background:rgba(44,110,107,.15); color:var(--lineA);}
+  .tagB{background:rgba(162,84,46,.15); color:var(--lineB);}
+
+  .chartTitle{
+    font-size:.95rem; font-weight:600; margin-bottom:2px;
+  }
+  .chartSub{font-size:.78rem; color:var(--muted); margin-bottom:10px;}
+  svg{width:100%; height:auto; display:block;}
+  .axisLabel{font-size:12px; fill:var(--ink); font-family: Georgia, serif;}
+  .tickLabel{font-size:10.5px; fill:var(--muted);}
+  .fpp{fill:none; stroke-width:2.4;}
+  .fppA{stroke:var(--lineA);}
+  .fppB{stroke:var(--lineB);}
+  .priceLine{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:5 4;}
+  .optPoint{stroke:#fff; stroke-width:1.6;}
+  .gridline{stroke:var(--grid); stroke-width:1;}
+
+  .readout{
+    margin-top:14px; background:var(--paper); border:1px solid var(--grid);
+    border-radius:6px; padding:12px 14px; font-size:.83rem;
+  }
+  .readout table{width:100%; border-collapse:collapse;}
+  .readout td{padding:3px 0; font-size:.83rem;}
+  .readout td:first-child{color:var(--muted);}
+  .readout td:last-child{text-align:right; font-variant-numeric:tabular-nums; font-weight:600;}
+
+  .verdict{
+    grid-column: 1 / -1;
+    background:#fff; border:1px solid var(--grid); border-radius:6px;
+    padding:16px 20px; font-size:.92rem; line-height:1.55;
+  }
+  .verdict b{color:var(--lineA);}
+  .verdict b.bB{color:var(--lineB);}
+  .eqBlock{margin-top:8px; font-size:.9rem;}
+  .note{
+    font-size:.72rem; color:var(--muted); margin-top:26px; text-align:center;
+    border-top:1px solid var(--grid); padding-top:12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Especialización bajo Ventaja Comparativa Relativa</h1>
+  <div class="subtitle">Modelo ricardiano simple — dos países, dos bienes, tecnología lineal (FPP como segmento de recta)</div>
+
+  <div class="grid">
+    <!-- PANEL DE CONTROLES -->
+    <div class="panel">
+      <h2>País A <span class="tag tagA">bien 1 relativamente barato</span></h2>
+      <div class="field">
+        <label>Requerimiento unitario $a_{1A}$ <span class="val" id="v_a1A">1.0</span></label>
+        <input type="range" id="a1A" min="0.2" max="4" step="0.1" value="1">
+      </div>
+      <div class="field">
+        <label>Requerimiento unitario $a_{2A}$ <span class="val" id="v_a2A">2.0</span></label>
+        <input type="range" id="a2A" min="0.2" max="4" step="0.1" value="2">
+      </div>
+      <div class="field">
+        <label>Dotación de trabajo $\bar L^A$ <span class="val" id="v_LA">120</span></label>
+        <input type="range" id="LA" min="20" max="300" step="5" value="120">
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>País B <span class="tag tagB">bien 2 relativamente barato</span></h2>
+      <div class="field">
+        <label>Requerimiento unitario $a_{1B}$ <span class="val" id="v_a1B">3.0</span></label>
+        <input type="range" id="a1B" min="0.2" max="4" step="0.1" value="3">
+      </div>
+      <div class="field">
+        <label>Requerimiento unitario $a_{2B}$ <span class="val" id="v_a2B">1.0</span></label>
+        <input type="range" id="a2B" min="0.2" max="4" step="0.1" value="1">
+      </div>
+      <div class="field">
+        <label>Dotación de trabajo $\bar L^B$ <span class="val" id="v_LB">120</span></label>
+        <input type="range" id="LB" min="20" max="300" step="5" value="120">
+      </div>
+
+      <div class="divider"></div>
+
+      <h2>Precio relativo internacional</h2>
+      <div class="field">
+        <label>$p^w = p_1/p_2$ <span class="val" id="v_pw">1.20</span></label>
+        <input type="range" id="pw" min="0.1" max="6" step="0.02" value="1.2">
+      </div>
+
+      <div class="readout" id="readoutBounds"></div>
+    </div>
+
+    <!-- GRAFICO PAIS A -->
+    <div class="panel">
+      <div class="chartTitle">FPP — País A</div>
+      <div class="chartSub" id="subA"></div>
+      <svg id="chartA" viewBox="0 0 340 300"></svg>
+      <div class="readout" id="readoutA"></div>
+    </div>
+
+    <!-- GRAFICO PAIS B -->
+    <div class="panel">
+      <div class="chartTitle">FPP — País B</div>
+      <div class="chartSub" id="subB"></div>
+      <svg id="chartB" viewBox="0 0 340 300"></svg>
+      <div class="readout" id="readoutB"></div>
+    </div>
+
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <div class="sectionLabel">Planificador central — FPP conjunta (mundial)</div>
+  <div class="gridWorld">
+    <div class="panel">
+      <h2>Asignación eficiente del planificador</h2>
+      <p style="font-size:.83rem; line-height:1.55; color:var(--ink); margin-top:0;">
+        El planificador central dispone de ambas dotaciones, $\bar L^A$ y $\bar L^B$, y asigna cada una
+        al bien donde su costo de oportunidad es menor. Ordena los dos tramos de trabajo por
+        $\theta_i = a_{1i}/a_{2i}$ creciente y construye la envolvente — un polígono de a lo sumo
+        dos segmentos.
+      </p>
+      <div class="readout" id="readoutWorldOrder"></div>
+      <div class="divider"></div>
+      <div class="readout" id="readoutWorld"></div>
+    </div>
+
+    <div class="panel">
+      <div class="chartTitle">FPP mundial (envolvente del planificador)</div>
+      <div class="chartSub" id="subWorld"></div>
+      <svg id="chartWorld" viewBox="0 0 620 380"></svg>
+    </div>
+  </div>
+
+  <div class="note">
+    Artefacto de referencia — Microeconomía Intermedia / Comercio Internacional. Solución de esquina del programa lineal
+    $\max\; p_1 Q_1^i + p_2 Q_2^i \;\text{s.a.}\; a_{1i}Q_1^i + a_{2i}Q_2^i \le \bar L^i,\; Q_1^i,Q_2^i\ge 0$.
+  </div>
+</div>
+
+<script>
+const ids = ["a1A","a2A","LA","a1B","a2B","LB","pw"];
+const S = {};
+ids.forEach(id => S[id] = document.getElementById(id));
+
+function fmt(x, d=2){ return Number(x).toFixed(d); }
+
+function drawFPP(svgId, a1, a2, L, colorClass, pw, optLabelPrefix){
+  const svg = document.getElementById(svgId);
+  const W = 340, H = 300;
+  const margin = {l:46, r:16, t:16, b:40};
+  const plotW = W - margin.l - margin.r;
+  const plotH = H - margin.t - margin.b;
+
+  const Q1max = L / a1;   // especialización total en bien 1
+  const Q2max = L / a2;   // especialización total en bien 2
+  const domesticSlope = a1 / a2; // costo de oportunidad de bien 1 en términos de bien 2
+
+  // Escala común generosa para permitir comparación visual razonable
+  const maxAxis = Math.max(Q1max, Q2max) * 1.15;
+
+  const sx = q1 => margin.l + (q1 / maxAxis) * plotW;
+  const sy = q2 => margin.t + plotH - (q2 / maxAxis) * plotH;
+
+  // Determinar punto óptimo (solución de esquina) según pw vs costo de oportunidad doméstico
+  let optQ1, optQ2, regime;
+  const EPS = 1e-6;
+  if (pw > domesticSlope + EPS){
+    optQ1 = Q1max; optQ2 = 0; regime = "bien1";
+  } else if (pw < domesticSlope - EPS){
+    optQ1 = 0; optQ2 = Q2max; regime = "bien2";
+  } else {
+    optQ1 = Q1max/2; optQ2 = Q2max/2; regime = "indiferencia";
+  }
+
+  let svgContent = "";
+
+  // grid
+  for(let i=0;i<=4;i++){
+    const gx = margin.l + (plotW/4)*i;
+    const gy = margin.t + (plotH/4)*i;
+    svgContent += `<line class="gridline" x1="${gx}" y1="${margin.t}" x2="${gx}" y2="${margin.t+plotH}"/>`;
+    svgContent += `<line class="gridline" x1="${margin.l}" y1="${gy}" x2="${margin.l+plotW}" y2="${gy}"/>`;
+  }
+
+  // ejes
+  svgContent += `<line x1="${margin.l}" y1="${margin.t+plotH}" x2="${margin.l+plotW}" y2="${margin.t+plotH}" stroke="${'#1c2b30'}" stroke-width="1.2"/>`;
+  svgContent += `<line x1="${margin.l}" y1="${margin.t}" x2="${margin.l}" y2="${margin.t+plotH}" stroke="${'#1c2b30'}" stroke-width="1.2"/>`;
+
+  svgContent += `<text class="axisLabel" x="${margin.l+plotW/2}" y="${H-6}" text-anchor="middle">Q₁ (bien 1)</text>`;
+  svgContent += `<text class="axisLabel" x="12" y="${margin.t+plotH/2}" text-anchor="middle" transform="rotate(-90 12 ${margin.t+plotH/2})">Q₂ (bien 2)</text>`;
+
+  // ticks numericos extremos
+  svgContent += `<text class="tickLabel" x="${sx(Q1max)}" y="${margin.t+plotH+14}" text-anchor="middle">${fmt(Q1max,1)}</text>`;
+  svgContent += `<text class="tickLabel" x="${margin.l-6}" y="${sy(Q2max)+3}" text-anchor="end">${fmt(Q2max,1)}</text>`;
+
+  // FPP (segmento lineal)
+  svgContent += `<line class="fpp ${colorClass}" x1="${sx(0)}" y1="${sy(Q2max)}" x2="${sx(Q1max)}" y2="${sy(0)}"/>`;
+
+  // linea de precio relativo internacional, pasando por el punto optimo, para referencia visual
+  // p^w es la pendiente (en valor absoluto) de la recta de isovalor: Q2 = (V/p2) - p^w Q1
+  // dibujamos una recta paralela tangente al vertice optimo, acotada al recuadro
+  function isovalueAt(q1){ return optQ2 + pw*(optQ1 - q1); }
+  let x0 = 0, x1 = maxAxis;
+  // recortar dentro de rango visible en Q2>=0
+  let y0 = isovalueAt(x0), y1 = isovalueAt(x1);
+  if (y0 > maxAxis){ x0 = optQ1 - (maxAxis-optQ2)/pw; y0 = maxAxis; }
+  if (y1 < 0){ x1 = optQ1 + optQ2/pw; y1 = 0; }
+  svgContent += `<line class="priceLine" x1="${sx(x0)}" y1="${sy(y0)}" x2="${sx(x1)}" y2="${sy(y1)}"/>`;
+
+  // punto optimo
+  svgContent += `<circle class="optPoint" cx="${sx(optQ1)}" cy="${sy(optQ2)}" r="5.5" fill="${'#c9a24b'}"/>`;
+  const labelDX = optQ1 > maxAxis*0.6 ? -8 : 8;
+  const anchor = optQ1 > maxAxis*0.6 ? "end" : "start";
+  svgContent += `<text class="axisLabel" x="${sx(optQ1)+labelDX}" y="${sy(optQ2)-8}" text-anchor="${anchor}" font-weight="600">${optLabelPrefix}*</text>`;
+
+  svg.innerHTML = svgContent;
+
+  return {Q1max, Q2max, domesticSlope, optQ1, optQ2, regime};
+}
+
+function drawWorldFPP(a1A,a2A,LA, a1B,a2B,LB, pw){
+  const svg = document.getElementById("chartWorld");
+  const W = 620, H = 380;
+  const margin = {l:56, r:20, t:20, b:46};
+  const plotW = W - margin.l - margin.r;
+  const plotH = H - margin.t - margin.b;
+
+  const thetaA = a1A/a2A, thetaB = a1B/a2B;
+
+  // Tramos: cada país aporta (theta, Q1max_del_tramo, Q2max_del_tramo)
+  const tramos = [
+    {pais:"A", theta:thetaA, Q1cap:LA/a1A, Q2cap:LA/a2A, color:"#2c6e6b"},
+    {pais:"B", theta:thetaB, Q1cap:LB/a1B, Q2cap:LB/a2B, color:"#a2542e"}
+  ].sort((x,y)=> x.theta - y.theta);
+  // el tramo con MENOR theta (más barato producir bien1) se usa primero para expandir Q1
+
+  const Q1worldMax = tramos[0].Q1cap + tramos[1].Q1cap;
+  const Q2worldMax = tramos[0].Q2cap + tramos[1].Q2cap;
+  const maxAxis = Math.max(Q1worldMax, Q2worldMax) * 1.12;
+
+  const sx = q1 => margin.l + (q1/maxAxis)*plotW;
+  const sy = q2 => margin.t + plotH - (q2/maxAxis)*plotH;
+
+  // Vertices del polígono, recorriendo desde (0, Q2worldMax) hasta (Q1worldMax, 0)
+  // Empezamos totalmente especializados en bien 2 (Q1=0), y vamos "convirtiendo"
+  // primero el tramo de menor theta hacia bien 1.
+  const P0 = {q1:0, q2:Q2worldMax};
+  const P1 = {q1:tramos[0].Q1cap, q2:Q2worldMax - tramos[0].Q1cap*tramos[0].theta};
+  const P2 = {q1:Q1worldMax, q2:0};
+
+  // Determinar el óptimo del planificador según pw, recorriendo los mismos vertices
+  const thetaLow = tramos[0].theta, thetaHigh = tramos[1].theta;
+  let opt, regimeText;
+  const EPS=1e-6;
+  if (pw > thetaHigh + EPS){
+    opt = P2; regimeText = "Especialización mundial completa en Bien 1 (ambos tramos)";
+  } else if (pw < thetaLow - EPS){
+    opt = P0; regimeText = "Especialización mundial completa en Bien 2 (ambos tramos)";
+  } else if (Math.abs(pw - thetaLow) <= EPS){
+    opt = P1; regimeText = `Vértice: tramo ${tramos[0].pais} recién convertido a Bien 1`;
+  } else {
+    opt = P1; regimeText = `Especialización parcial — vértice del polígono (tramo ${tramos[0].pais} → Bien 1, tramo ${tramos[1].pais} → Bien 2)`;
+  }
+
+  let s = "";
+  // grid
+  for(let i=0;i<=5;i++){
+    const gx = margin.l+(plotW/5)*i, gy = margin.t+(plotH/5)*i;
+    s += `<line class="gridline" x1="${gx}" y1="${margin.t}" x2="${gx}" y2="${margin.t+plotH}"/>`;
+    s += `<line class="gridline" x1="${margin.l}" y1="${gy}" x2="${margin.l+plotW}" y2="${gy}"/>`;
+  }
+  // ejes
+  s += `<line x1="${margin.l}" y1="${margin.t+plotH}" x2="${margin.l+plotW}" y2="${margin.t+plotH}" stroke="#1c2b30" stroke-width="1.2"/>`;
+  s += `<line x1="${margin.l}" y1="${margin.t}" x2="${margin.l}" y2="${margin.t+plotH}" stroke="#1c2b30" stroke-width="1.2"/>`;
+  s += `<text class="axisLabel" x="${margin.l+plotW/2}" y="${H-10}" text-anchor="middle">Q₁ mundial (bien 1)</text>`;
+  s += `<text class="axisLabel" x="16" y="${margin.t+plotH/2}" text-anchor="middle" transform="rotate(-90 16 ${margin.t+plotH/2})">Q₂ mundial (bien 2)</text>`;
+
+  // FPP individuales de referencia (tenues), ancladas en el origen, solo como referencia visual de pendiente
+  s += `<line class="lineWorldGhost" x1="${sx(0)}" y1="${sy(tramos[0].Q2cap)}" x2="${sx(tramos[0].Q1cap)}" y2="${sy(0)}"/>`;
+  s += `<line class="lineWorldGhost" x1="${sx(0)}" y1="${sy(tramos[1].Q2cap)}" x2="${sx(tramos[1].Q1cap)}" y2="${sy(0)}"/>`;
+
+  // Poligono: P0 -> P1 -> P2
+  s += `<polyline class="lineWorld" points="${sx(P0.q1)},${sy(P0.q2)} ${sx(P1.q1)},${sy(P1.q2)} ${sx(P2.q1)},${sy(P2.q2)}" fill="none"/>`;
+
+  // marcar vertices
+  [P0,P1,P2].forEach((p,i)=>{
+    s += `<circle cx="${sx(p.q1)}" cy="${sy(p.q2)}" r="3.2" fill="#1c2b30"/>`;
+  });
+  s += `<text class="axisLabel" x="${sx(P1.q1)+8}" y="${sy(P1.q2)-10}" font-weight="600">vértice (θ=${fmt(tramos[0].theta)})</text>`;
+
+  // punto optimo del planificador
+  s += `<circle class="optPoint" cx="${sx(opt.q1)}" cy="${sy(opt.q2)}" r="6.5" fill="#c9a24b"/>`;
+  const ldx = opt.q1 > maxAxis*0.6 ? -10 : 10;
+  const anchor = opt.q1 > maxAxis*0.6 ? "end":"start";
+  s += `<text class="axisLabel" x="${sx(opt.q1)+ldx}" y="${sy(opt.q2)-10}" text-anchor="${anchor}" font-weight="700">Óptimo del planificador</text>`;
+
+  svg.innerHTML = s;
+
+  document.getElementById("subWorld").textContent =
+    `Segmento 1: pendiente −θ(${tramos[0].pais})=${fmt(tramos[0].theta)} · Segmento 2: pendiente −θ(${tramos[1].pais})=${fmt(tramos[1].theta)}`;
+
+  document.getElementById("readoutWorldOrder").innerHTML = `
+    <table>
+      <tr><td>Orden de asignación (θ creciente)</td><td>${tramos[0].pais} → ${tramos[1].pais}</td></tr>
+      <tr><td>θ mínimo (tramo ${tramos[0].pais})</td><td>${fmt(tramos[0].theta)}</td></tr>
+      <tr><td>θ máximo (tramo ${tramos[1].pais})</td><td>${fmt(tramos[1].theta)}</td></tr>
+    </table>`;
+
+  document.getElementById("readoutWorld").innerHTML = `
+    <table>
+      <tr><td>Q₁ mundial máx</td><td>${fmt(Q1worldMax,1)}</td></tr>
+      <tr><td>Q₂ mundial máx</td><td>${fmt(Q2worldMax,1)}</td></tr>
+      <tr><td>Vértice (Q₁,Q₂)</td><td>(${fmt(P1.q1,1)}, ${fmt(P1.q2,1)})</td></tr>
+      <tr><td>Régimen con pʷ actual</td><td>${regimeText}</td></tr>
+      <tr><td>Óptimo planificador (Q₁*,Q₂*)</td><td>(${fmt(opt.q1,1)}, ${fmt(opt.q2,1)})</td></tr>
+    </table>
+    <div style="margin-top:8px; font-size:.78rem; color:var(--muted); line-height:1.5;">
+      El vértice del polígono coincide exactamente con la asignación descentralizada de mercado bajo
+      $p^w \\in [\\theta_{\\min}, \\theta_{\\max}]$: el planificador reproduce la especialización completa
+      de cada país en su bien de ventaja comparativa — resultado de eficiencia del <em>primer teorema del bienestar</em>
+      aplicado a este entorno lineal.
+    </div>`;
+}
+
+function render(){
+  const a1A = +S.a1A.value, a2A = +S.a2A.value, LA = +S.LA.value;
+  const a1B = +S.a1B.value, a2B = +S.a2B.value, LB = +S.LB.value;
+  const pw  = +S.pw.value;
+
+  ["a1A","a2A","LA","a1B","a2B","LB","pw"].forEach(id=>{
+    document.getElementById("v_"+id).textContent = fmt(S[id].value, id==="pw"?2:(id==="LA"||id==="LB"?0:1));
+  });
+
+  const rA = drawFPP("chartA", a1A, a2A, LA, "fppA", pw, "A");
+  const rB = drawFPP("chartB", a1B, a2B, LB, "fppB", pw, "B");
+
+  document.getElementById("subA").textContent =
+    `Costo de oportunidad doméstico: a₁A/a₂A = ${fmt(rA.domesticSlope)}`;
+  document.getElementById("subB").textContent =
+    `Costo de oportunidad doméstico: a₁B/a₂B = ${fmt(rB.domesticSlope)}`;
+
+  function regimeText(r){
+    if(r.regime==="bien1") return "Especialización completa en Bien 1";
+    if(r.regime==="bien2") return "Especialización completa en Bien 2";
+    return "Indiferencia (pʷ = costo de oportunidad doméstico)";
+  }
+
+  document.getElementById("readoutA").innerHTML = `
+    <table>
+      <tr><td>Q₁ᴬ máx (especialización en 1)</td><td>${fmt(rA.Q1max,1)}</td></tr>
+      <tr><td>Q₂ᴬ máx (especialización en 2)</td><td>${fmt(rA.Q2max,1)}</td></tr>
+      <tr><td>Régimen óptimo</td><td>${regimeText(rA)}</td></tr>
+      <tr><td>(Q₁ᴬ*, Q₂ᴬ*)</td><td>(${fmt(rA.optQ1,1)}, ${fmt(rA.optQ2,1)})</td></tr>
+    </table>`;
+  document.getElementById("readoutB").innerHTML = `
+    <table>
+      <tr><td>Q₁ᴮ máx (especialización en 1)</td><td>${fmt(rB.Q1max,1)}</td></tr>
+      <tr><td>Q₂ᴮ máx (especialización en 2)</td><td>${fmt(rB.Q2max,1)}</td></tr>
+      <tr><td>Régimen óptimo</td><td>${regimeText(rB)}</td></tr>
+      <tr><td>(Q₁ᴮ*, Q₂ᴮ*)</td><td>(${fmt(rB.optQ1,1)}, ${fmt(rB.optQ2,1)})</td></tr>
+    </table>`;
+
+  const thetaA = rA.domesticSlope, thetaB = rB.domesticSlope;
+  const lower = Math.min(thetaA, thetaB), upper = Math.max(thetaA, thetaB);
+  const AbtjVA = thetaA < thetaB; // A tiene ventaja comparativa en bien 1
+
+  document.getElementById("readoutBounds").innerHTML = `
+    <table>
+      <tr><td>θᴬ = a₁A/a₂A</td><td>${fmt(thetaA)}</td></tr>
+      <tr><td>θᴮ = a₁B/a₂B</td><td>${fmt(thetaB)}</td></tr>
+      <tr><td>Rango de comercio mutuamente benef.</td><td>[${fmt(lower)}, ${fmt(upper)}]</td></tr>
+      <tr><td>pʷ actual</td><td>${fmt(pw)}</td></tr>
+    </table>`;
+
+  let verdictHTML = "";
+  const paisVCbien1 = AbtjVA ? "A" : "B";
+  const paisVCbien2 = AbtjVA ? "B" : "A";
+
+  if (pw > upper + 1e-6 || pw < lower - 1e-6){
+    const outOfRangeInfo = pw > upper
+      ? `El precio internacional (pʷ = ${fmt(pw)}) supera a <b>ambos</b> costos de oportunidad domésticos (máx = ${fmt(upper)}): ambos países se especializan completamente en el <b>Bien 1</b>. No hay ganancias de comercio adicionales para uno de los dos —el patrón no reproduce la predicción de especialización interindustrial completa.`
+      : `El precio internacional (pʷ = ${fmt(pw)}) es inferior a <b class="bB">ambos</b> costos de oportunidad domésticos (mín = ${fmt(lower)}): ambos países se especializan completamente en el <b class="bB">Bien 2</b>.`;
+    verdictHTML = `<b>Fuera del intervalo de comercio mutuamente beneficioso.</b> ${outOfRangeInfo}
+      <div class="eqBlock">Para observar el patrón de especialización interindustrial (cada país en un bien distinto), ajuste pʷ dentro de $[${fmt(lower)},\\ ${fmt(upper)}]$.</div>`;
+  } else {
+    verdictHTML = `
+      <b>Patrón de especialización según ventaja comparativa.</b>
+      El país <b class="${AbtjVA?'':'bB'}">${paisVCbien1}</b> tiene menor costo de oportunidad en el Bien 1
+      (θ = ${fmt(Math.min(thetaA,thetaB))}) y el país <b class="${!AbtjVA?'':'bB'}">${paisVCbien2}</b> tiene menor costo de oportunidad en el Bien 2
+      (θ = ${fmt(Math.max(thetaA,thetaB))}). Con $p^w = ${fmt(pw)} \\in [${fmt(lower)}, ${fmt(upper)}]$, el equilibrio predicho es de
+      <b class="${AbtjVA?'':'bB'}">especialización completa</b>: ${paisVCbien1} produce únicamente Bien 1
+      y ${paisVCbien2} produce únicamente Bien 2 — cada país se ubica en el vértice de su FPP correspondiente al bien en el que
+      posee ventaja comparativa.
+      <div class="eqBlock">
+      Condición formal: el país A elige la esquina $(Q_1^{A*},0)$ si $p^w > a_{1A}/a_{2A}$, y la esquina $(0,Q_2^{A*})$ si $p^w < a_{1A}/a_{2A}$
+      — solución de esquina del programa lineal de maximización del valor del producto.
+      </div>`;
+  }
+  document.getElementById("verdict").innerHTML = verdictHTML;
+
+  drawWorldFPP(a1A,a2A,LA, a1B,a2B,LB, pw);
+
+  if (window.MathJax) MathJax.typesetPromise();
+}
+
+ids.forEach(id => S[id].addEventListener("input", render));
+render();
+</script>
+</body>
+</html>
