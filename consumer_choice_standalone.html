@@ -130,6 +130,16 @@ select:focus-visible, button:focus-visible, input:focus-visible{outline:none; bo
 .segmented button.active{background:var(--accent); color:#fff;}
 .segmented button:hover:not(.active){background:var(--surface-2); color:var(--ink);}
 
+/* ---------- Alternador de tema claro/oscuro ---------- */
+.theme-toggle{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:"IBM Plex Sans"; font-size:13.5px; font-weight:500;
+  color:var(--ink); background:var(--surface); border:1px solid var(--line-strong);
+  border-radius:8px; padding:8px 13px; cursor:pointer; white-space:nowrap;
+}
+.theme-toggle:hover{background:var(--surface-2);}
+.theme-toggle svg{width:15px; height:15px; flex:none;}
+
 /* ---------- Layout principal ---------- */
 main.grid{
   display:grid; grid-template-columns: minmax(0,1.55fr) minmax(300px, 1fr);
@@ -267,6 +277,10 @@ footer.credit{margin-top:26px; color:var(--ink-faint); font-size:12px; text-alig
           <button data-method="slutsky" class="active">Slutsky</button>
           <button data-method="hicks">Hicks</button>
         </div>
+      </div>
+      <div class="field">
+        <label>Apariencia</label>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar entre tema claro y oscuro"></button>
       </div>
     </div>
   </header>
@@ -856,6 +870,46 @@ buildCaseSelect();
 buildCommonSliders();
 buildCaseParamSliders();
 render();
+
+/* ============================================================
+   10) ALTERNADOR DE TEMA CLARO/OSCURO
+   El documento ya define, en CSS, los tokens de ambos temas: el
+   bloque :root (claro) y su redefinición bajo prefers-color-scheme
+   y bajo [data-theme="dark"]. Este bloque solo gestiona el atributo
+   data-theme sobre <html> y el ícono del botón; no persiste la
+   elección entre sesiones (cada carga de página respeta, de nuevo,
+   la preferencia del sistema operativo del usuario).
+   ============================================================ */
+(function initThemeToggle() {
+  const root = document.documentElement;
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
+
+  const ICONS = {
+    // Ícono de sol: se muestra cuando el tema activo es oscuro (invita a pasar a claro)
+    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"></path></svg>',
+    // Ícono de luna: se muestra cuando el tema activo es claro (invita a pasar a oscuro)
+    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 14.5A8.4 8.4 0 1 1 9.5 3.8a6.7 6.7 0 0 0 10.7 10.7z"></path></svg>'
+  };
+
+  function systemPrefersDark() {
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  // Tema efectivamente aplicado en este momento (explícito si el usuario ya lo fijó; si no, el del sistema)
+  function effectiveTheme() {
+    const explicit = root.getAttribute("data-theme");
+    return (explicit === "light" || explicit === "dark") ? explicit : (systemPrefersDark() ? "dark" : "light");
+  }
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    root.style.colorScheme = theme; // mejora el estilo nativo de sliders y demás controles del navegador
+    btn.innerHTML = (theme === "dark" ? ICONS.sun : ICONS.moon) + (theme === "dark" ? "Claro" : "Oscuro");
+    btn.setAttribute("aria-label", theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro");
+  }
+
+  applyTheme(effectiveTheme());
+  btn.addEventListener("click", () => applyTheme(effectiveTheme() === "dark" ? "light" : "dark"));
+})();
 </script>
 </body>
 </html>
